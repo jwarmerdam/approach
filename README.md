@@ -1,11 +1,25 @@
 # Approach
-A small c++ module supporting the "approach" operation: the act of converging one value toward another in a frame rate agnostic way, where the speed may depend on the distance, similar to a spring, but may use other strategies such as simple linear speed to accomplish the goal as well.
+A small c++ module supporting the "approach" operation: the act of converging one value toward another in a stateless, frame rate independent way, where the speed may depend on the distance. A common strategy is exponential decay, which is similar to a spring, but other strategies such as simple linear speed can be used as well.
 
-Example:
+Examples:
 ```c++
 float getUpdatedValue(float currentValue, float targetValue, float dt)
 {
     return approach(currentValue, targetValue, dt, Linear(4.0f));
+}
+```
+
+```c++
+Quaternion getUpdatedValue(Quaternion currentValue, Quaternion targetValue, float dt)
+{
+    return approachDirection(currentValue, targetValue, dt, Exponential(2.0f));
+}
+```
+
+```c++
+SpringState<Vec2> getUpdatedValue(SpringState<Vec2> currentValue, Vec2 targetValue, float dt)
+{
+    return approach(currentValue, targetValue, dt, Spring(2.0f, 0.1f));
 }
 ```
 
@@ -22,7 +36,7 @@ float updatedValue = lerp(someValue, someTargetValue, blendSpeed * dt);
 
 This behaves reasonably for some combinations of blendSpeed and dt, but not all. So the question becomes: what is the actual mathematical operation that is being attempted here? To begin with we can see the velocity of the convergence will depend on the distance between the values. To simplify we can pretend we are always converging towards zero. That would look something like this:
 
-$y(x)=-Ay(x)$
+$y'(x)=-Ay(x)$
 
 The solution to this differential equation is $y(x)=c_1e^{-Ax}$ which is a simple exponential decay! So if we are willing to take the performance burden of computing an exponential we can easily make this bit of code perfectly frame rate independent with a little bit of rearranging to account for blending toward a target instead of zero:
 
@@ -38,8 +52,10 @@ Some examples of strategies:
 - converge _faster_ as you get closer, like a magnet
 - and so on...
 
-A few templates later and this is the result.
+Another desire is to be able to use approach on as many types as possible, and in both linear and angular contexts. The basic requirement for types that want linear space approach is just that they can do enough arithmetic to support a lerp function (+,-,* w/ float), and compute a distance magnitude, either through a dot product that yields a floating point scalar, or by using abs on a scalar. For types that operate in an angular context the lerp math and dot product are required.
 
+# Requirements
+- c++20 concepts and modules
+- tested in msvc++ only so far
 
-
-
+I've been using variants of this code personally for years, however, this particular project is mostly an excuse to experiment with newer c++ features, such as concepts and modules. The module currently depends only on cmath (for sqrt, exp, and trigonometric functions)

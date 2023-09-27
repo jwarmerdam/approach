@@ -29,12 +29,12 @@ I've often seen code like the following somewhere in an update loop in a game pr
 float updatedValue = lerp(someValue, someTargetValue, 0.1f);
 ```
 
-This code is very much not frame rate agnostic! The next tier of sophistication looks like this:
+This code is assumes a fixed frame rate. A bit better is this:
 ```c++
 float updatedValue = lerp(someValue, someTargetValue, blendSpeed * dt);
 ```
 
-This behaves reasonably for some combinations of blendSpeed and dt, but not all. So the question becomes: what is the actual mathematical operation that is being attempted here? To begin with we can see the velocity of the convergence will depend on the distance between the values. To simplify we can pretend we are always converging towards zero. That would look something like this:
+This behaves somewhat uniformly for some combinations of blendSpeed and dt, but not all. But what is the actual mathematical operation that is being attempted? To begin with we can see the velocity of the convergence will depend on the distance between the values. To simplify we can pretend we are always converging towards zero. That would look something like this:
 
 $y'(x)=-Ay(x)$
 

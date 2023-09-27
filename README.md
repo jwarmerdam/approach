@@ -44,10 +44,10 @@ The solution to this differential equation is $y(x)=c_1e^{-Ax}$ which is a simpl
 float updatedValue = lerp(someValue, targetValue, 1.0f - expf(-rate * dt);
 ```
 
-So that's great! I've done just that in code refactors, including writing settings conversion code so that the exponential version will run with a rate exactly equivalent to the old lerp version at a specific frame rate (which is a fun exercise for the reader!) Because of the exponential decay, this type of convergence tends to feel very spring-like. In fact, if you want this feel, and you are able to track more state, you may just want to use a spring anyway. But I like flexibility, I'd like to be able to swap among a variety of different strategies to accomplish this convergence task. 
+So that's great! I've done just that in code refactors, including writing settings conversion code so that the exponential version will run with a rate exactly equivalent to the old lerp version at a specific frame rate (which is a fun exercise for the reader!) Because of the exponential decay, this type of convergence tends to feel very spring-like. In fact, if you want this feel, and you are able to track more state, you may just want to use a spring anyway. But for flexibility it would be nice to be able to swap among a variety of different strategies to accomplish this convergence task. 
 
 Some examples of strategies:
-- exponential decay, but put a speed limit on it so it doesn't go crazy at large distances.
+- exponential decay, but put a speed limit on it so it doesn't go too fast at large distances.
 - linear convergence, but never let the distance become greater than a specific radius
 - converge _faster_ as you get closer, like a magnet
 - and so on...
